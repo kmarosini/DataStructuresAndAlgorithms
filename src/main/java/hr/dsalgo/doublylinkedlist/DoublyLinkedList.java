@@ -1,20 +1,19 @@
-package hr.dsalgo.linkedlist;
+package hr.dsalgo.doublylinkedlist;
 
-import java.util.IllegalFormatCodePointException;
+import hr.dsalgo.doublylinkedlist.Node;
 
-public class LinkedList {
+public class DoublyLinkedList {
     private Node head;
     private Node tail;
     private int length;
 
-    public LinkedList(int value) {
+    public DoublyLinkedList(int value) {
         Node newNode = new Node(value);
         head = newNode;
         tail = newNode;
         length = 1;
     }
 
-    // Methods for printing node values.
     public void printList() {
         Node tempNode = head;
         while (tempNode != null) {
@@ -35,167 +34,138 @@ public class LinkedList {
         System.out.println("Length: " + length);
     }
 
-    // Linked List methods.
-
-    // O(1)
     public void append(int value) {
         Node newNode = new Node(value);
-
         if (length == 0) {
             head = newNode;
             tail = newNode;
-        } else {
-            tail.next = newNode;
-            tail = newNode;
         }
+        tail.next = newNode;
+        newNode.prev = tail;
+        tail = newNode;
         length++;
     }
 
-    // O(n)
     public Node removeLast() {
-        if (length == 0) {
-            return null;
-        }
-
-        Node pre = head;
-        Node temp = head;
-
-        while (temp.next != null) {
-            pre = temp;
-            temp = temp.next;
-        }
-        tail = pre;
-        tail.next = null;
-        length--;
-        if (length == 0) {
+        if(length == 0) return null;
+        Node temp = tail;
+        if (length == 1) {
             head = null;
             tail = null;
+        } else {
+            tail = tail.prev;
+            tail.next = null;
+            temp.prev = null;
         }
+        length--;
         return temp;
     }
 
     public void prepend(int value) {
         Node newNode = new Node(value);
-
         if (length == 0) {
             head = newNode;
             tail = newNode;
         } else {
             newNode.next = head;
+            head.prev = newNode;
             head = newNode;
         }
         length++;
     }
 
     public Node removeFirst() {
+        Node temp = head;
         if (length == 0) {
             return null;
         }
-
-        Node temp = head;
-
-        head = head.next;
-        temp.next = null;
-        length--;
-        if (length == 0) {
+        if (length == 1) {
+            head = null;
             tail = null;
+        } else {
+            head = head.next;
+            head.prev = null;
+            temp.next = null;
         }
+        length--;
         return temp;
     }
 
     public Node get(int index) {
-        if (index < 0 || index >= length ) {
+        if (index < 0 || index >= length) {
             return null;
         }
-
         Node temp = head;
-
-        for (int i = 0; i < index; i++) {
-            temp = temp.next;
+        if (index < length/2) {
+            for (int i = 0; i <index; i++) {
+                temp = temp.next;
+            }
+        } else {
+            temp = tail;
+            for (int i = length - 1; i > index; i--) {
+                temp = temp.prev;
+            }
         }
         return temp;
     }
 
     public boolean set(int index, int value) {
         Node temp = get(index);
-
-        if(temp != null) {
+        if (temp != null) {
             temp.value = value;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public boolean insert(int index, int value) {
-        if (index < 0 || index > length) {
-            return false;
-        }
+        if (index < 0 || index > length) return false;
         if (index == 0) {
             prepend(value);
             return true;
-        } else if(index == length) {
+        }
+        if (index == length) {
             append(value);
             return true;
         }
-
+        Node before = get(index - 1);
+        Node after = before.next;
         Node newNode = new Node(value);
-        Node temp = get(index - 1);
 
-        newNode.next = temp.next;
-        temp.next = newNode;
+        newNode.prev = before;
+        newNode.next = after;
+
+        before.next = newNode;
+        after.prev = newNode;
+
         length++;
+
         return true;
     }
 
     public Node remove(int index) {
-        if (index < 0 || index >= length) {
+        if (index < 0 || index >= length ) {
             return null;
         }
         if (index == 0) {
             return removeFirst();
         }
-        if(index == length - 1) {
+        if (index == length - 1) {
             return removeLast();
         }
-
-        Node prev = get(index-1);
-        Node temp = prev.next;
-
-        prev.next = temp.next;
-        temp.next = null;
-        length--;
-        return temp;
-    }
-
-    public void reverse() {
-        Node temp = head;
-        head = tail;
-        tail = temp;
-
+        Node temp = get(index);
+        Node before = temp.prev;
         Node after = temp.next;
-        Node before = null;
 
-        for (int i = 0; i < length; i++) {
-            after = temp.next;
-            temp.next = before;
-            before = temp;
-            temp = after;
-        }
+        temp.prev = null;
+        temp.next = null;
+        before.next = after;
+        after.prev = before;
+        length--;
+
+        return temp;
+
+
+
     }
-
-
-    /* LL Question 1 Method */
-    public Node findMiddleNode() {
-        Node slow = head;
-        Node fast = tail;
-
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
-        return slow;
-    }
-
-
 }
