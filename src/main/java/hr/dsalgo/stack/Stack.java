@@ -1,6 +1,7 @@
 package hr.dsalgo.stack;
 
 public class Stack {
+    // LIFO - Last in first out
     private Node top;
     private int height;
 
