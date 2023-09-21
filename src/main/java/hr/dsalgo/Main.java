@@ -1,16 +1,12 @@
 package hr.dsalgo;
 
-import hr.dsalgo.doublylinkedlist.DoublyLinkedList;
-import hr.dsalgo.linkedlist.LinkedList;
-import hr.dsalgo.stack.Stack;
+import hr.dsalgo.hashtable.HashTable;
 
 public class Main {
     public static void main(String[] args) {
-        Stack stack = new Stack(5);
+        HashTable myHashTable = new HashTable();
 
-        stack.printStack();
-        stack.getHeight();
-        stack.getTop();
+        myHashTable.printTable();
 
     }
 }
